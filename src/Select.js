@@ -4,7 +4,7 @@ import React, { Component, type ElementRef, type Node } from 'react';
 
 import { createFilter } from './filters';
 import { DummyInput, ScrollCaptor } from './internal/index';
-import { cleanValue, noop, scrollIntoView } from './utils';
+import { cleanValue, isTouchCapable, noop, scrollIntoView } from './utils';
 import {
   formatGroupLabel,
   getOptionLabel,
@@ -54,6 +54,8 @@ export type Props = {
   autoFocus?: boolean,
   /* Remove the currently focused option when the user presses backspace */
   backspaceRemovesValue: boolean,
+  /* Remove focus from the input when the user selects an option (handy for dismissing the keyboard on touch devices) */
+  blurInputOnSelect: boolean,
   /* When the user reaches the top/bottom of the menu, prevent scroll on the scroll-parent  */
   captureMenuScroll: boolean,
   /* Close the select menu when the user selects an option */
@@ -144,7 +146,8 @@ export type Props = {
 
 const defaultProps = {
   backspaceRemovesValue: true,
-  captureMenuScroll: true,
+  blurInputOnSelect: isTouchCapable(),
+  captureMenuScroll: !isTouchCapable(),
   closeMenuOnSelect: true,
   components: {},
   escapeClearsValue: false,
@@ -205,7 +208,7 @@ export default class Select extends Component<Props, State> {
   inputHeight: ?number = 20;
   inputIsHiddenAfterUpdate: ?boolean;
   instancePrefix: string = '';
-  menuRef: ?HTMLElement;
+  menuRef: ?ElRef;
   openAfterFocus: boolean = false;
   scrollToFocusedOptionOnUpdate: boolean = false;
   state = {
@@ -230,7 +233,7 @@ export default class Select extends Component<Props, State> {
   }
   componentDidMount() {
     if (this.props.autoFocus) {
-      this.focus();
+      this.focusInput();
     }
   }
   componentWillReceiveProps(nextProps: Props) {
@@ -261,13 +264,19 @@ export default class Select extends Component<Props, State> {
       });
       delete this.inputIsHiddenAfterUpdate;
     }
+    // manage touch listeners
+    if (nextProps.menuIsOpen && !this.props.menuIsOpen) {
+      this.startListeningToTouch();
+    } else if (!nextProps.menuIsOpen && this.props.menuIsOpen) {
+      this.stopListeningToTouch();
+    }
   }
   componentDidUpdate(prevProps: Props) {
     const { isDisabled } = this.props;
     const { isFocused } = this.state;
     // ensure focus is restored correctly when the control becomes enabled
     if (isFocused && !isDisabled && prevProps.isDisabled) {
-      this.focus();
+      this.focusInput();
     }
     // scroll the focused option into view if necessary
     if (
@@ -429,12 +438,18 @@ export default class Select extends Component<Props, State> {
     const candidate = this.getOptionValue(option);
     return selectValue.some(i => this.getOptionValue(i) === candidate);
   }
-  focus() {
-    if (!this.input) return;
+  focusInput() {
+    if (!this.input) {
+      this.focusControl();
+      return;
+    }
     this.input.focus();
   }
   blurInput() {
-    if (!this.input) return;
+    if (!this.input) {
+      this.blurControl();
+      return;
+    }
     this.input.blur();
   }
   onMenuOpen() {
@@ -505,7 +520,8 @@ export default class Select extends Component<Props, State> {
     onChange(newValue, { action });
   };
   selectOption = (newValue: OptionType) => {
-    const { isMulti } = this.props;
+    const { blurInputOnSelect, isMulti } = this.props;
+
     if (isMulti) {
       const { selectValue } = this.state;
       if (this.isOptionSelected(newValue, selectValue)) {
@@ -519,6 +535,10 @@ export default class Select extends Component<Props, State> {
     } else {
       this.setValue(newValue, 'select-option');
     }
+
+    if (blurInputOnSelect) {
+      this.blurInput();
+    }
   };
   removeValue = (removedValue: OptionType) => {
     const { onChange } = this.props;
@@ -526,7 +546,7 @@ export default class Select extends Component<Props, State> {
     onChange(selectValue.filter(i => i !== removedValue), {
       action: 'remove-value',
     });
-    this.focus();
+    this.focusInput();
   };
   clearValue = () => {
     const { isMulti, onChange } = this.props;
@@ -545,7 +565,7 @@ export default class Select extends Component<Props, State> {
   onControlMouseDown = (event: MouseOrTouchEvent) => {
     if (!this.state.isFocused) {
       this.openAfterFocus = true;
-      this.focus();
+      this.focusInput();
     } else if (!this.state.menuIsOpen) {
       this.openMenu('first');
     } else {
@@ -571,6 +591,27 @@ export default class Select extends Component<Props, State> {
 
     this.onClearIndicatorMouseDown(event);
   };
+  onTouchStart = (event: TouchEvent) => {
+    // close the menu if the user presses outside
+    if (
+      this.controlRef &&
+      !this.controlRef.contains(event.target) &&
+      this.menuRef &&
+      !this.menuRef.contains(event.target)
+    ) {
+      this.blurControl();
+    }
+  };
+  startListeningToTouch() {
+    if (document && document.addEventListener) {
+      document.addEventListener('touchstart', this.onTouchStart, false);
+    }
+  }
+  stopListeningToTouch() {
+    if (document && document.removeEventListener) {
+      document.removeEventListener('touchstart', this.onTouchStart, false);
+    }
+  }
   onKeyDown = (event: SyntheticKeyboardEvent<HTMLElement>) => {
     const {
       backspaceRemovesValue,
@@ -690,10 +731,13 @@ export default class Select extends Component<Props, State> {
     this.onInputChange(inputValue);
     this.onMenuOpen();
   };
-  onInputFocus = (event: SyntheticFocusEvent<HTMLInputElement>) => {
-    if (this.props.onFocus) {
-      this.props.onFocus(event);
-    }
+  blurControl = () => {
+    this.onMenuClose();
+    this.setState({
+      isFocused: false,
+    });
+  };
+  focusControl = () => {
     this.inputIsHiddenAfterUpdate = false;
     this.setState({
       isFocused: true,
@@ -703,15 +747,19 @@ export default class Select extends Component<Props, State> {
     }
     this.openAfterFocus = false;
   };
+  onInputFocus = (event: SyntheticFocusEvent<HTMLInputElement>) => {
+    if (this.props.onFocus) {
+      this.props.onFocus(event);
+    }
+
+    this.focusControl();
+  };
   onInputBlur = (event: SyntheticFocusEvent<HTMLInputElement>) => {
     if (this.props.onBlur) {
       this.props.onBlur(event);
     }
     this.onInputChange('');
-    this.onMenuClose();
-    this.setState({
-      isFocused: false,
-    });
+    this.blurControl();
   };
   onMenuRef = (ref: ElementRef<*>) => {
     this.menuRef = ref;
@@ -722,7 +770,7 @@ export default class Select extends Component<Props, State> {
     }
     event.stopPropagation();
     event.preventDefault();
-    this.focus();
+    this.focusInput();
   };
   onMenuMouseMove = (event: SyntheticMouseEvent<HTMLElement>) => {
     this.blockOptionHover = false;
@@ -744,7 +792,7 @@ export default class Select extends Component<Props, State> {
     if (this.props.isDisabled) return;
     const { isMulti, menuIsOpen } = this.props;
     if (!this.focused) {
-      this.focus();
+      this.focusInput();
     }
     if (menuIsOpen) {
       this.inputIsHiddenAfterUpdate = !isMulti;
@@ -763,7 +811,7 @@ export default class Select extends Component<Props, State> {
     this.clearValue();
     event.stopPropagation();
     this.openAfterFocus = false;
-    setTimeout(() => this.focus());
+    setTimeout(() => this.focusInput());
   };
   getElementId = (element: 'group' | 'input' | 'listbox' | 'option') => {
     return `${this.instancePrefix}-${element}`;
@@ -793,6 +841,12 @@ export default class Select extends Component<Props, State> {
     const { inputIsHidden } = this.state;
 
     if (!isSearchable) {
+      // DummyInput technique isn't viable on touch device; we can't remove the
+      // input cursor or soft-keyboard...
+      if (isTouchCapable()) {
+        return <div style={{ height: this.inputHeight }} />;
+      }
+
       // use a dummy input to maintain focus/blur functionality
       return (
         <DummyInput
