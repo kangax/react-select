@@ -28,7 +28,6 @@
     "jsdom": "^7.0.2",
     "mocha": "^2.3.3",
     "react": "^16.0.0",
-    "react-addons-test-utils": "^0.14.1",
     "react-dom": "^16.0.0",
     "react-gravatar": "^2.2.2",
     "react-component-gulp-tasks": "^0.7.7",
