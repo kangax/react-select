@@ -5,8 +5,9 @@
 var React = (typeof window !== "undefined" ? window['React'] : typeof global !== "undefined" ? global['React'] : null);
 var PropTypes = require('prop-types');
 var classes = (typeof window !== "undefined" ? window['classNames'] : typeof global !== "undefined" ? global['classNames'] : null);
+var createReactClass = require('create-react-class');
 
-var Option = React.createClass({
+var Option = createReactClass({
 	displayName: 'Option',
 
 	propTypes: {
@@ -87,10 +88,11 @@ var classes = (typeof window !== "undefined" ? window['classNames'] : typeof glo
 var Value = require('./Value');
 var SingleValue = require('./SingleValue');
 var Option = require('./Option');
+var createReactClass = require('create-react-class');
 
 var requestId = 0;
 
-var Select = React.createClass({
+var Select = createReactClass({
 
 	displayName: 'Select',
 
@@ -1026,8 +1028,9 @@ module.exports = Select;
 var React = (typeof window !== "undefined" ? window['React'] : typeof global !== "undefined" ? global['React'] : null);
 var classes = (typeof window !== "undefined" ? window['classNames'] : typeof global !== "undefined" ? global['classNames'] : null);
 var PropTypes = require('prop-types');
+var createReactClass = require('create-react-class');
 
-var SingleValue = React.createClass({
+var SingleValue = createReactClass({
 	displayName: 'SingleValue',
 
 	propTypes: {
@@ -1058,8 +1061,9 @@ module.exports = SingleValue;
 var React = (typeof window !== "undefined" ? window['React'] : typeof global !== "undefined" ? global['React'] : null);
 var classes = (typeof window !== "undefined" ? window['classNames'] : typeof global !== "undefined" ? global['classNames'] : null);
 var PropTypes = require('prop-types');
+var createReactClass = require('create-react-class');
 
-var Value = React.createClass({
+var Value = createReactClass({
 
 	displayName: 'Value',
 
