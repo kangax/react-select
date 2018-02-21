@@ -3,19 +3,20 @@
 'use strict';
 
 var React = (typeof window !== "undefined" ? window['React'] : typeof global !== "undefined" ? global['React'] : null);
+var PropTypes = require('prop-types');
 var classes = (typeof window !== "undefined" ? window['classNames'] : typeof global !== "undefined" ? global['classNames'] : null);
 
 var Option = React.createClass({
 	displayName: 'Option',
 
 	propTypes: {
-		addLabelText: React.PropTypes.string, // string rendered in case of allowCreate option passed to ReactSelect
-		className: React.PropTypes.string, // className (based on mouse position)
-		mouseDown: React.PropTypes.func, // method to handle click on option element
-		mouseEnter: React.PropTypes.func, // method to handle mouseEnter on option element
-		mouseLeave: React.PropTypes.func, // method to handle mouseLeave on option element
-		option: React.PropTypes.object.isRequired, // object that is base for that option
-		renderFunc: React.PropTypes.func // method passed to ReactSelect component to render label text
+		addLabelText: PropTypes.string, // string rendered in case of allowCreate option passed to ReactSelect
+		className: PropTypes.string, // className (based on mouse position)
+		mouseDown: PropTypes.func, // method to handle click on option element
+		mouseEnter: PropTypes.func, // method to handle mouseEnter on option element
+		mouseLeave: PropTypes.func, // method to handle mouseLeave on option element
+		option: PropTypes.object.isRequired, // object that is base for that option
+		renderFunc: PropTypes.func // method passed to ReactSelect component to render label text
 	},
 	blockEvent: function blockEvent(event) {
 		event.preventDefault();
@@ -80,6 +81,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var React = (typeof window !== "undefined" ? window['React'] : typeof global !== "undefined" ? global['React'] : null);
 var ReactDOM = require('react-dom');
+var PropTypes = require('prop-types');
 var Input = (typeof window !== "undefined" ? window['AutosizeInput'] : typeof global !== "undefined" ? global['AutosizeInput'] : null);
 var classes = (typeof window !== "undefined" ? window['classNames'] : typeof global !== "undefined" ? global['classNames'] : null);
 var Value = require('./Value');
@@ -93,47 +95,47 @@ var Select = React.createClass({
 	displayName: 'Select',
 
 	propTypes: {
-		addLabelText: React.PropTypes.string, // placeholder displayed when you want to add a label on a multi-value input
-		allowCreate: React.PropTypes.bool, // whether to allow creation of new entries
-		asyncOptions: React.PropTypes.func, // function to call to get options
-		autoload: React.PropTypes.bool, // whether to auto-load the default async options set
-		backspaceRemoves: React.PropTypes.bool, // whether backspace removes an item if there is no text input
-		cacheAsyncResults: React.PropTypes.bool, // whether to allow cache
-		className: React.PropTypes.string, // className for the outer element
-		clearAllText: React.PropTypes.string, // title for the "clear" control when multi: true
-		clearValueText: React.PropTypes.string, // title for the "clear" control
-		clearable: React.PropTypes.bool, // should it be possible to reset value
-		delimiter: React.PropTypes.string, // delimiter to use to join multiple values
-		disabled: React.PropTypes.bool, // whether the Select is disabled or not
-		filterOption: React.PropTypes.func, // method to filter a single option  (option, filterString)
-		filterOptions: React.PropTypes.func, // method to filter the options array: function ([options], filterString, [values])
-		ignoreCase: React.PropTypes.bool, // whether to perform case-insensitive filtering
-		inputProps: React.PropTypes.object, // custom attributes for the Input (in the Select-control) e.g: {'data-foo': 'bar'}
-		isLoading: React.PropTypes.bool, // whether the Select is loading externally or not (such as options being loaded)
-		labelKey: React.PropTypes.string, // path of the label value in option objects
-		matchPos: React.PropTypes.string, // (any|start) match the start or entire string when filtering
-		matchProp: React.PropTypes.string, // (any|label|value) which option property to filter on
-		multi: React.PropTypes.bool, // multi-value input
-		name: React.PropTypes.string, // field name, for hidden <input /> tag
-		newOptionCreator: React.PropTypes.func, // factory to create new options when allowCreate set
-		noResultsText: React.PropTypes.string, // placeholder displayed when there are no matching search results
-		onBlur: React.PropTypes.func, // onBlur handler: function (event) {}
-		onChange: React.PropTypes.func, // onChange handler: function (newValue) {}
-		onFocus: React.PropTypes.func, // onFocus handler: function (event) {}
-		onInputChange: React.PropTypes.func, // onInputChange handler: function (inputValue) {}
-		onOptionLabelClick: React.PropTypes.func, // onCLick handler for value labels: function (value, event) {}
-		optionComponent: React.PropTypes.func, // option component to render in dropdown
-		optionRenderer: React.PropTypes.func, // optionRenderer: function (option) {}
-		options: React.PropTypes.array, // array of options
-		placeholder: React.PropTypes.string, // field placeholder, displayed when there's no value
-		searchable: React.PropTypes.bool, // whether to enable searching feature or not
-		searchingText: React.PropTypes.string, // message to display whilst options are loading via asyncOptions
-		searchPromptText: React.PropTypes.string, // label to prompt for search input
-		singleValueComponent: React.PropTypes.func, // single value component when multiple is set to false
-		value: React.PropTypes.any, // initial field value
-		valueComponent: React.PropTypes.func, // value component to render in multiple mode
-		valueKey: React.PropTypes.string, // path of the label value in option objects
-		valueRenderer: React.PropTypes.func // valueRenderer: function (option) {}
+		addLabelText: PropTypes.string, // placeholder displayed when you want to add a label on a multi-value input
+		allowCreate: PropTypes.bool, // whether to allow creation of new entries
+		asyncOptions: PropTypes.func, // function to call to get options
+		autoload: PropTypes.bool, // whether to auto-load the default async options set
+		backspaceRemoves: PropTypes.bool, // whether backspace removes an item if there is no text input
+		cacheAsyncResults: PropTypes.bool, // whether to allow cache
+		className: PropTypes.string, // className for the outer element
+		clearAllText: PropTypes.string, // title for the "clear" control when multi: true
+		clearValueText: PropTypes.string, // title for the "clear" control
+		clearable: PropTypes.bool, // should it be possible to reset value
+		delimiter: PropTypes.string, // delimiter to use to join multiple values
+		disabled: PropTypes.bool, // whether the Select is disabled or not
+		filterOption: PropTypes.func, // method to filter a single option  (option, filterString)
+		filterOptions: PropTypes.func, // method to filter the options array: function ([options], filterString, [values])
+		ignoreCase: PropTypes.bool, // whether to perform case-insensitive filtering
+		inputProps: PropTypes.object, // custom attributes for the Input (in the Select-control) e.g: {'data-foo': 'bar'}
+		isLoading: PropTypes.bool, // whether the Select is loading externally or not (such as options being loaded)
+		labelKey: PropTypes.string, // path of the label value in option objects
+		matchPos: PropTypes.string, // (any|start) match the start or entire string when filtering
+		matchProp: PropTypes.string, // (any|label|value) which option property to filter on
+		multi: PropTypes.bool, // multi-value input
+		name: PropTypes.string, // field name, for hidden <input /> tag
+		newOptionCreator: PropTypes.func, // factory to create new options when allowCreate set
+		noResultsText: PropTypes.string, // placeholder displayed when there are no matching search results
+		onBlur: PropTypes.func, // onBlur handler: function (event) {}
+		onChange: PropTypes.func, // onChange handler: function (newValue) {}
+		onFocus: PropTypes.func, // onFocus handler: function (event) {}
+		onInputChange: PropTypes.func, // onInputChange handler: function (inputValue) {}
+		onOptionLabelClick: PropTypes.func, // onCLick handler for value labels: function (value, event) {}
+		optionComponent: PropTypes.func, // option component to render in dropdown
+		optionRenderer: PropTypes.func, // optionRenderer: function (option) {}
+		options: PropTypes.array, // array of options
+		placeholder: PropTypes.string, // field placeholder, displayed when there's no value
+		searchable: PropTypes.bool, // whether to enable searching feature or not
+		searchingText: PropTypes.string, // message to display whilst options are loading via asyncOptions
+		searchPromptText: PropTypes.string, // label to prompt for search input
+		singleValueComponent: PropTypes.func, // single value component when multiple is set to false
+		value: PropTypes.any, // initial field value
+		valueComponent: PropTypes.func, // value component to render in multiple mode
+		valueKey: PropTypes.string, // path of the label value in option objects
+		valueRenderer: PropTypes.func // valueRenderer: function (option) {}
 	},
 
 	getDefaultProps: function getDefaultProps() {
@@ -1023,13 +1025,14 @@ module.exports = Select;
 
 var React = (typeof window !== "undefined" ? window['React'] : typeof global !== "undefined" ? global['React'] : null);
 var classes = (typeof window !== "undefined" ? window['classNames'] : typeof global !== "undefined" ? global['classNames'] : null);
+var PropTypes = require('prop-types');
 
 var SingleValue = React.createClass({
 	displayName: 'SingleValue',
 
 	propTypes: {
-		placeholder: React.PropTypes.string, // this is default value provided by React-Select based component
-		value: React.PropTypes.object // selected option
+		placeholder: PropTypes.string, // this is default value provided by React-Select based component
+		value: PropTypes.object // selected option
 	},
 	render: function render() {
 		var classNames = classes('Select-placeholder', this.props.value && this.props.value.className);
@@ -1054,18 +1057,19 @@ module.exports = SingleValue;
 
 var React = (typeof window !== "undefined" ? window['React'] : typeof global !== "undefined" ? global['React'] : null);
 var classes = (typeof window !== "undefined" ? window['classNames'] : typeof global !== "undefined" ? global['classNames'] : null);
+var PropTypes = require('prop-types');
 
 var Value = React.createClass({
 
 	displayName: 'Value',
 
 	propTypes: {
-		disabled: React.PropTypes.bool, // disabled prop passed to ReactSelect
-		onOptionLabelClick: React.PropTypes.func, // method to handle click on value label
-		onRemove: React.PropTypes.func, // method to handle remove of that value
-		option: React.PropTypes.object.isRequired, // option passed to component
-		optionLabelClick: React.PropTypes.bool, // indicates if onOptionLabelClick should be handled
-		renderer: React.PropTypes.func // method to render option label passed to ReactSelect
+		disabled: PropTypes.bool, // disabled prop passed to ReactSelect
+		onOptionLabelClick: PropTypes.func, // method to handle click on value label
+		onRemove: PropTypes.func, // method to handle remove of that value
+		option: PropTypes.object.isRequired, // option passed to component
+		optionLabelClick: PropTypes.bool, // indicates if onOptionLabelClick should be handled
+		renderer: PropTypes.func // method to render option label passed to ReactSelect
 	},
 
 	blockEvent: function blockEvent(event) {
